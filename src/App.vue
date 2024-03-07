@@ -1,103 +1,10 @@
 <script setup lang="ts">
-import { Table, TableCaption, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Button } from './components/ui/button';
-import { Plus } from 'lucide-vue-next';
-import { entries, save } from './data/entries';
-import { Drawer, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerContent, DrawerFooter, DrawerClose } from './components/ui/drawer';
-import { Form, FormItem, FormLabel, FormField, FormControl } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from './components/ui/textarea';
-import { toTypedSchema } from '@vee-validate/zod';
-import * as z from 'zod'
-import moment, { Moment } from 'moment';
-
-const createEntryZodSchema = z.object({
-    name: z.string(),
-    text: z.string()
-})
-
-type CreateEntrySchema = z.infer<typeof createEntryZodSchema>
-
-const createEntrySchema = toTypedSchema(createEntryZodSchema)
-
-function getDifferenceToToday(date: Moment) {
-    return Math.abs(date.diff(moment(), 'days'))
-}
-
-function createEntry(value: CreateEntrySchema) {
-    entries.value.push({
-        last_reset: moment(),
-        ...value
-    })
-
-    save()
-}
-
+import { Toaster } from '@/components/ui/sonner';
 </script>
 
 <template>
-    <main class="flex justify-center">
-        <div class="wrapper sm:w-3/4 w-11/12">
-            <Table>
-                <TableCaption>List of Entries</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Last Accident</TableHead>
-                    </TableRow>
-                </TableHeader>
-
-                <TableRow v-for="entry in entries">
-                    <TableCell> {{ entry.name }} </TableCell>
-                    <TableCell> {{ getDifferenceToToday(entry.last_reset) }} </TableCell>
-                </TableRow>
-            </Table>
-        </div>
-    </main>
-
-    <Drawer>
-        <DrawerTrigger as-child>
-            <div>
-                <Button variant="outline" size="icon" class="w-20 h-20 fixed right-10 bottom-10">
-                    <Plus />
-                </Button>
-            </div>
-        </DrawerTrigger>
-
-        <DrawerContent>
-            <DrawerHeader>
-                <DrawerTitle>Create new Entry</DrawerTitle>
-            </DrawerHeader>
-            <div id="content" class="p-5">
-                <Form :validation-schema="createEntrySchema" @submit="createEntry">
-                    <FormField v-slot="{ componentField }" name="name">
-                        <FormItem>
-                            <FormControl>
-                                <Input placeholder="Name" v-bind="componentField" />
-                            </FormControl>
-                            <FormDescription />
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                    <FormField v-slot="{ componentField }" name="text">
-                        <FormItem>
-                            <FormLabel></FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Text" v-bind="componentField" />
-                            </FormControl>
-                            <FormDescription />
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                    <DrawerFooter>
-                        <DrawerClose>
-                            <Button type="submit">Create</Button>
-                        </DrawerClose>
-                    </DrawerFooter>
-                </Form>
-            </div>
-        </DrawerContent>
-    </Drawer>
+    <Toaster/>
+    <RouterView/>
 </template>
 
 <style scoped></style>
