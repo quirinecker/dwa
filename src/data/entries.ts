@@ -3,6 +3,10 @@ import { Ref, ref } from "vue";
 
 const localStorageKey = 'entries'
 
+export function getDifferenceToToday(date: Moment) {
+    return Math.abs(date.diff(moment(), 'days'))
+}
+
 export const entries: Ref<Entry[]> = ref(parseFromPossibleString(localStorage.getItem(localStorageKey)))
 
 export interface Entry {

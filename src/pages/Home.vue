@@ -8,11 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { getDifferenceToToday } from '@/data/entries';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod'
-import moment, { Moment } from 'moment';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
+import moment from 'moment';
 
 const router = useRouter()
 const createEntryZodSchema = z.object({
@@ -24,9 +25,6 @@ type CreateEntrySchema = z.infer<typeof createEntryZodSchema>
 
 const createEntrySchema = toTypedSchema(createEntryZodSchema)
 
-function getDifferenceToToday(date: Moment) {
-    return Math.abs(date.diff(moment(), 'days'))
-}
 
 function createEntry(value: CreateEntrySchema) {
     if (entries.value.map(entry => entry.name).includes(value.name)) {
@@ -41,7 +39,8 @@ function createEntry(value: CreateEntrySchema) {
     entries.value.push({
         last_reset: moment(),
         name: value.name,
-        text: value.text
+        text: value.text && value.text.trim() !== '' 
+            ? value.text : undefined
     })
 
     save()
