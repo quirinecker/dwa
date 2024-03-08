@@ -32,14 +32,14 @@ function createEntry(value: CreateEntrySchema) {
             important: true,
             description: 'please use a unique name'
         })
-        
+
         return
     }
 
     entries.value.push({
         last_reset: moment(),
         name: value.name,
-        text: value.text && value.text.trim() !== '' 
+        text: value.text && value.text.trim() !== ''
             ? value.text : undefined
     })
 
@@ -65,28 +65,14 @@ function openDetailWithName(name: string) {
                     <span>{{ entry.name }}</span>
                     <Badge variant="secondary">{{ getDifferenceToToday(entry.last_reset) }} days</Badge>
                 </Button>
-                <!-- <Table> -->
-                <!--     <TableCaption>List of Entries</TableCaption> -->
-                <!--     <TableHeader> -->
-                <!--         <TableRow> -->
-                <!--             <TableHead>Name</TableHead> -->
-                <!--             <TableHead>Last Accident</TableHead> -->
-                <!--         </TableRow> -->
-                <!--     </TableHeader> -->
-                <!---->
-                <!--     <TableRow v-for="entry in entries"> -->
-                <!--         <TableCell> {{ entry.name }} </TableCell> -->
-                <!--         <TableCell> {{ getDifferenceToToday(entry.last_reset) }} </TableCell> -->
-                <!--     </TableRow> -->
-                <!-- </Table> -->
             </main>
         </div>
     </ScrollArea>
 
     <Drawer>
         <DrawerTrigger as-child>
-            <div>
-                <Button variant="outline" size="icon" class="w-20 h-20 fixed right-10 bottom-10">
+            <div class="fixed bottom-0 w-full h-28 flex justify-center items-center">
+                <Button size="icon" class="h-20  sm:w-3/4 w-11/12">
                     <Plus />
                 </Button>
             </div>
