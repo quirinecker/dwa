@@ -12,7 +12,7 @@ export const entries: Ref<Entry[]> = ref(parseFromPossibleString(localStorage.ge
 export interface Entry {
     name: string
     text: string | undefined
-    last_reset: Moment 
+    last_reset: Moment
 }
 
 export function parseFromPossibleString(input: string | null): Entry[] {
@@ -26,7 +26,7 @@ export function parseFromPossibleString(input: string | null): Entry[] {
     for (const rawObject of rawObjects) {
         const { name, text, last_reset } = rawObject
 
-        if (name && text && last_reset) {
+        if (name && last_reset) {
             entries.push({ name, text, last_reset: moment(last_reset) })
         }
     }
