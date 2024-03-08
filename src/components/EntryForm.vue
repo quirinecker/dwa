@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormItem, FormLabel, FormField, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { Button } from './ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Entry } from '@/data/entries';
 
 const emit = defineEmits<{
   submit: [value: CreateEntrySchema]
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
 	action: 'create' | 'edit'
+	inputEntry?: Entry | undefined
 }>()
 
 
@@ -31,7 +33,7 @@ const createEntrySchema = toTypedSchema(createEntryZodSchema)
 		<FormField v-slot="{ componentField }" name="name">
 			<FormItem>
 				<FormControl>
-					<Input placeholder="Name" v-bind="componentField" />
+					<Input placeholder="Name" v-bind="componentField" :model-value="inputEntry ? inputEntry.name : ''" />
 				</FormControl>
 				<FormMessage />
 			</FormItem>
@@ -40,7 +42,7 @@ const createEntrySchema = toTypedSchema(createEntryZodSchema)
 			<FormItem>
 				<FormLabel></FormLabel>
 				<FormControl>
-					<Textarea placeholder="Text" v-bind="componentField" />
+					<Textarea placeholder="Text" v-bind="componentField" :model-value="inputEntry ? inputEntry.text : ''" />
 				</FormControl>
 				<FormDescription />
 				<FormMessage />
