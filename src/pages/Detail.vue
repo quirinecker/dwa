@@ -10,8 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const probs = defineProps<{ name: string }>()
+const router = useRouter()
 const entry = ref(entries.value.find(entry => entry.name === probs.name))
 
 </script>
@@ -30,7 +32,7 @@ const entry = ref(entries.value.find(entry => entry.name === probs.name))
 			</Card>
 		</header>
 		<nav class="w-full flex flex-row justify-between my-4">
-			<a><ArrowBigLeft class="cursor-pointer"/></a>
+			<a><ArrowBigLeft class="cursor-pointer" @click="router.back()"/></a>
 			<a>{{entry.name}}</a>
 
 			<DropdownMenu>
