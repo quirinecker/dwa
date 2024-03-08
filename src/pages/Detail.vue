@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
-import { entries, getDifferenceToToday } from '@/data/entries';
+import { Entry, entries, getDifferenceToToday, save } from '@/data/entries';
 import { ArrowBigLeft, MenuIcon, TrashIcon } from 'lucide-vue-next';
 import {
 	DropdownMenu,
@@ -11,10 +11,25 @@ import {
 import { Button } from '@/components/ui/button';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 const probs = defineProps<{ name: string }>()
 const router = useRouter()
 const entry = ref(entries.value.find(entry => entry.name === probs.name))
+
+
+function deleteEntry(entry: Entry) {
+	const index = entries.value.indexOf(entry)
+
+	if (index === undefined) {
+		toast('Deletion failed')
+		return
+	}
+
+	entries.value.splice(index, 1)
+	save()
+	router.back()
+}
 
 </script>
 
@@ -41,12 +56,13 @@ const entry = ref(entries.value.find(entry => entry.name === probs.name))
 				</DropdownMenuTrigger>
 
 				<DropdownMenuContent class="mr-2">
-					<DropdownMenuItem>
+					<DropdownMenuItem @click="() => deleteEntry(entry)">
 						<TrashIcon color="#ef4444"/>
 						<span color="#ef4444">Delete</span>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+
 		</nav>
 		<div id="content" class="w-full flex flex-col gap-5 items-center mt-20">
 			<Button class="w-full">Edit</Button>
