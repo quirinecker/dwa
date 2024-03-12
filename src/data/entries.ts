@@ -1,39 +1,46 @@
 import moment, { Moment } from "moment";
-import { Ref, ref } from "vue";
 
-const localStorageKey = 'entries'
+export const localStorageKey = 'entries'
 
 export function getDifferenceToToday(date: Moment) {
-    return Math.abs(date.diff(moment(), 'days'))
+	return Math.abs(date.diff(moment(), 'days'))
 }
 
-export const entries: Ref<Entry[]> = ref(parseFromPossibleString(localStorage.getItem(localStorageKey)))
-
 export interface Entry {
-    name: string
-    text: string | undefined
-    last_reset: Moment
+	name: string
+	text: string | undefined
+	last_reset: Moment
 }
 
 export function parseFromPossibleString(input: string | null): Entry[] {
-    if (input === null) {
-        return []
-    }
+	if (input === null) {
+		return []
+	}
 
-    const entries: Entry[] = []
-    const rawObjects: any[] = JSON.parse(input)
+	const entries: Entry[] = []
+	const rawObjects: any[] = JSON.parse(input)
 
-    for (const rawObject of rawObjects) {
-        const { name, text, last_reset } = rawObject
+	for (const rawObject of rawObjects) {
+		const { name, text, last_reset } = rawObject
+		const date = parseDate(last_reset)
 
-        if (name && last_reset) {
-            entries.push({ name, text, last_reset: moment(last_reset) })
-        }
-    }
+		if (date && name) {
+			entries.push({ name, text, last_reset: moment(last_reset) })
+		}
 
-    return entries
+	}
+
+	return entries
 }
 
-export function save() {
-    localStorage.setItem(localStorageKey, JSON.stringify(entries.value))
+export function parseDate(dateString: string) {
+	const date = moment(dateString)
+	if (!date.isValid()) {
+		return undefined
+	}
+	return date
+}
+
+export function save(entries: Entry[]) {
+	localStorage.setItem(localStorageKey, JSON.stringify(entries))
 }

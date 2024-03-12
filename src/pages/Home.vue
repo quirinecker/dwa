@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-vue-next';
-import { entries, save } from '@/data/entries';
+import { entries } from '@/state/entry'
+import { save } from '@/data/entries';
 import { Drawer, DrawerHeader, DrawerTitle, DrawerContent } from '@/components/ui/drawer';
 import { Dialog, DialogHeader, DialogTitle, DialogContent } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +37,7 @@ async function createEntry(value: CreateEntrySchema) {
 			? value.text : undefined
 	})
 
-	save()
+	save(entries.value)
 	createDrawerState.value = false
 }
 

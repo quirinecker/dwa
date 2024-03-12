@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import * as z from 'zod'
-import { toTypedSchema } from '@vee-validate/zod'
 import { Input } from '@/components/ui/input';
-import { Form, FormItem, FormLabel, FormField, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { Button } from './ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Entry } from '@/data/entries';
+import { ref } from 'vue';
 
 const emit = defineEmits<{
-  submit: [value: CreateEntrySchema]
+	submit: [value: CreateEntrySchema]
 }>()
 
 const props = defineProps<{
@@ -16,41 +15,38 @@ const props = defineProps<{
 	inputEntry?: Entry | undefined
 }>()
 
+const nameField = ref(props.inputEntry ? props.inputEntry.name : '')
+const textField = ref(props.inputEntry ? props.inputEntry.text : '')
 
-const createEntryZodSchema = z.object({
+const createEntrySchema = z.object({
 	name: z.string(),
 	text: z.string().optional()
 })
 
-export type CreateEntrySchema = z.infer<typeof createEntryZodSchema>
+export type CreateEntrySchema = z.infer<typeof createEntrySchema>
 
-const createEntrySchema = toTypedSchema(createEntryZodSchema)
+
+function submit() {
+	const result = createEntrySchema.safeParse({
+		name: nameField.value,
+		text: textField.value
+	})
+
+	if (result.success) {
+		emit('submit', result.data)
+	}
+}
+
 
 </script>
 
 <template>
-	<Form :validation-schema="createEntrySchema" @submit="(val) => emit('submit', val as CreateEntrySchema)">
-		<FormField v-slot="{ componentField }" name="name">
-			<FormItem>
-				<FormControl>
-					<Input placeholder="Name" v-bind="componentField" :model-value="inputEntry ? inputEntry.name : ''" />
-				</FormControl>
-				<FormMessage />
-			</FormItem>
-		</FormField>
-		<FormField v-slot="{ componentField }" name="text">
-			<FormItem>
-				<FormLabel></FormLabel>
-				<FormControl>
-					<Textarea placeholder="Text" v-bind="componentField" :model-value="inputEntry ? inputEntry.text : ''" />
-				</FormControl>
-				<FormDescription />
-				<FormMessage />
-			</FormItem>
-		</FormField>
-		<Button type="submit" class="w-full" v-if="props.action === 'create'">Create</Button>
-		<Button type="submit" class="w-full" v-else>Edit</Button>
-	</Form>
+	<form class="flex gap-3 flex-col">
+		<Input placeholder="Name" v-model:model-value="nameField" />
+		<Textarea placeholder="Text" v-model:model-value="textField" />
+		<Button class="w-full" v-if="props.action === 'create'" @click="submit()">Create</Button>
+		<Button class="w-full" v-else @click="submit()">Edit</Button>
+	</form>
 </template>
 
 <style scoped></style>

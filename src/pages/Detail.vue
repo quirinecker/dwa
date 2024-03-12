@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
-import { entries, getDifferenceToToday, save } from '@/data/entries';
+import { entries } from '@/state/entry';
+import { getDifferenceToToday, save } from '@/data/entries';
 import { ArrowBigLeft, MenuIcon, TrashIcon } from 'lucide-vue-next';
 import {
 	DropdownMenu,
@@ -40,7 +41,7 @@ function deleteEntry() {
 	}
 
 	entries.value.splice(index, 1)
-	save()
+	save(entries.value)
 	router.back()
 }
 
@@ -52,7 +53,7 @@ function resetDate() {
 
 	entry.value.last_reset = moment()
 	confirmDialogState.value = false
-	save()
+	save(entries.value)
 }
 
 function editEntry(val: CreateEntrySchema) {
@@ -65,7 +66,7 @@ function editEntry(val: CreateEntrySchema) {
 	entry.value.name = val.name
 	entry.value.text = val.text
 	editEntryDialog.value = false
-	save()
+	save(entries.value)
 }
 
 </script>
