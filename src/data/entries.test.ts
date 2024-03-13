@@ -4,17 +4,17 @@ import { faker } from '@faker-js/faker'
 import { parseFromPossibleString } from "./entries"
 import moment from "moment"
 
+export function generateList<E>(length: number, generate: () => E) {
+	const arr: Array<E> = []
+
+	for (let i = 0; i < length; i++) {
+		arr.push(generate());
+	}
+
+	return arr;
+}
 
 describe('function for managing entries data entity', () => {
-	function generateList<E>(length: number, generate: () => E) {
-		const arr: Array<E> = []
-
-		for (let i = 0; i < length; i++) {
-			arr.push(generate());
-		}
-
-		return arr;
-	}
 
 	function generateListWithWrongDate() {
 		return generateList(10, () => <any>{
