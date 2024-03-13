@@ -79,7 +79,7 @@ function openDetailWithName(name: string) {
 				<DialogTitle> Create new Entry </DialogTitle>
 			</DialogHeader>
 			<div class="p-5">
-				<EntryForm action="create" @submit="(val) => createEntry(val)"> </EntryForm>
+				<EntryForm action="create" @submit="(val) => createEntry(val)" :entries="entries"> </EntryForm>
 			</div>
 		</DialogContent>
 	</Dialog>
@@ -90,7 +90,7 @@ function openDetailWithName(name: string) {
 				<DrawerTitle>Create new Entry</DrawerTitle>
 			</DrawerHeader>
 			<div class="p-5">
-				<EntryForm action="create" @submit="(val) => createEntry(val)"> </EntryForm>
+				<EntryForm action="create" @submit="(val) => createEntry(val)" :entries="entries"> </EntryForm>
 			</div>
 		</DrawerContent>
 	</Drawer>

@@ -77,29 +77,65 @@ describe('Entry Form tests', () => {
 		expect(button.text()).toBe('Edit')
 	})
 
-	it('displays nothing when the form is valid and processed', () => {
+	it('displays nothing when the form is valid and processed', async () => {
 		const { name, text } = getSampleValues()
 		const component = mount(EntryForm)
 		const { nameField, textField } = getFormFields(component)
-		const [button, errorSpan] = getAdditionalElements(component, 'button', 'span')
+		const [button] = getAdditionalElements(component, 'button')
 
-		nameField.element.value = name
+		await nameField.setValue(name)
+		await textField.setValue(text)
+
+		await button.trigger('click')
+		const errorSpans = component.findAll('[data-test="error-msg"]')
+
+		expect(errorSpans.length).toBe(0)
+	})
+
+	it('displays that the name is missing when no name is entered', async () => {
+		const { text } = getSampleValues()
+		const component = mount(EntryForm)
+		const { textField } = getFormFields(component)
+		const [button] = getAdditionalElements(component, 'button')
+
 		textField.element.value = text
 
-		button.trigger('click')
-		expect(errorSpan.text()).toBe('')
+		await button.trigger('click')
+		const errorSpans = component.findAll('[data-test="error-msg"]')
+
+		expect(errorSpans.length).toBe(1)
+		expect(errorSpans[0].text()).toBe('* name is required')
 	})
 
-	it('displays that the name is missing when no name is entered', () => {
-		const { name } = getSampleValues()
-		const component = mount(EntryForm)
-		const { nameField }  = getFormFields(component)
-		const [button, errorSpan] = getAdditionalElements(component, 'button', 'span')
+	it('displays error that the name is not unique when there is another entry in the passed entries with the same name', async () => {
+		const { text } = getSampleValues()
+		const component = mount(EntryForm, {props: {entries: [<Entry>{name: 'something', text: 'something else'}]}})
+		const { textField, nameField } = getFormFields(component)
+		const [button] = getAdditionalElements(component, 'button')
 
-		nameField.element.value = name
+		await textField.setValue(text)
+		await nameField.setValue('something')
 
-		button.trigger('click')
-		expect(errorSpan.text()).toBe('name is required')
+		await button.trigger('click')
+		const errorSpans = component.findAll('[data-test="error-msg"]')
+
+		expect(errorSpans.length).toBe(1)
+		expect(errorSpans[0].text()).toBe('* name must be unique')
 	})
 
+	it('fires submit when there is no issue with the inputted data', async() => {
+		const { text } = getSampleValues()
+		const component = mount(EntryForm, {props: {entries: [<Entry>{name: 'something', text: 'something else'}]}})
+		const { textField, nameField } = getFormFields(component)
+		const [button] = getAdditionalElements(component, 'button')
+
+		await textField.setValue(text)
+		await nameField.setValue('something else')
+
+		await button.trigger('click')
+		const errorSpans = component.findAll('[data-test="error-msg"]')
+
+		expect(errorSpans.length).toBe(0)
+		expect(component.emitted('submit'))
+	})
 })

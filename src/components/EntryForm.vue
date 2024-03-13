@@ -13,17 +13,18 @@ const emit = defineEmits<{
 const props = withDefaults(defineProps<{
 	action?: 'create' | 'edit'
 	inputEntry?: Entry | undefined
+	entries?: Entry[]
 }>(), {
-	action: 'create'
+	action: 'create',
 })
 
 const nameField = ref(props.inputEntry ? props.inputEntry.name : '')
 const textField = ref(props.inputEntry ? props.inputEntry.text : '')
-const errorMessage: Ref<string | undefined> = ref(undefined)
+const issues: Ref<Array<string>> = ref([])
 
 const createEntrySchema = z.object({
-	name: z.string({required_error: 'name is required'}),
-	text: z.string().optional()
+	name: z.string().trim().min(1, { message: 'name is required' }),
+	text: z.string().trim().optional()
 })
 
 export type CreateEntrySchema = z.infer<typeof createEntrySchema>
@@ -35,9 +36,19 @@ function submit() {
 		text: textField.value
 	})
 
+
 	if (result.success) {
-		emit('submit', result.data)
+		const isUnique = props.entries === undefined
+			|| !props.entries.map(entry => entry.name).includes(result.data.name)
+
+		if (isUnique) {
+			emit('submit', result.data)
+			return
+		}
+
+		issues.value = ['name must be unique']
 	} else {
+		issues.value = result.error.issues.map(issue => issue.message)
 	}
 }
 
@@ -45,14 +56,16 @@ function submit() {
 </script>
 
 <template>
-	<form class="flex gap-3 flex-col">
-		<span>{{ errorMessage }}</span>
+	<div class="flex gap-3 flex-col">
+		<div >
+			<span v-for="issue of issues" data-test="error-msg" class="text-red-800"> * {{ issue }}</span>
+		</div>
 
 		<Input placeholder="Name" v-model:model-value="nameField" />
 		<Textarea placeholder="Text" v-model:model-value="textField" />
 		<Button class="w-full" v-if="props.action === 'create'" @click="submit()">Create</Button>
 		<Button class="w-full" v-else @click="submit()">Edit</Button>
-	</form>
+	</div>
 </template>
 
 <style scoped></style>
