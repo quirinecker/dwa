@@ -4,22 +4,25 @@ import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Entry } from '@/data/entries';
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 const emit = defineEmits<{
 	submit: [value: CreateEntrySchema]
 }>()
 
-const props = defineProps<{
-	action: 'create' | 'edit'
+const props = withDefaults(defineProps<{
+	action?: 'create' | 'edit'
 	inputEntry?: Entry | undefined
-}>()
+}>(), {
+	action: 'create'
+})
 
 const nameField = ref(props.inputEntry ? props.inputEntry.name : '')
 const textField = ref(props.inputEntry ? props.inputEntry.text : '')
+const errorMessage: Ref<string | undefined> = ref(undefined)
 
 const createEntrySchema = z.object({
-	name: z.string(),
+	name: z.string({required_error: 'name is required'}),
 	text: z.string().optional()
 })
 
@@ -34,6 +37,7 @@ function submit() {
 
 	if (result.success) {
 		emit('submit', result.data)
+	} else {
 	}
 }
 
@@ -42,6 +46,8 @@ function submit() {
 
 <template>
 	<form class="flex gap-3 flex-col">
+		<span>{{ errorMessage }}</span>
+
 		<Input placeholder="Name" v-model:model-value="nameField" />
 		<Textarea placeholder="Text" v-model:model-value="textField" />
 		<Button class="w-full" v-if="props.action === 'create'" @click="submit()">Create</Button>
