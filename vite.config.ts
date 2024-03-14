@@ -9,7 +9,10 @@ import path from 'path'
 export default defineConfig({
 	test: {
 		environment: 'jsdom',
-		globals: true
+		globals: true,
+        coverage: {
+            provider: 'istanbul'
+        }
 	},
     plugins: [vue(), VitePWA({
         registerType: 'autoUpdate',
