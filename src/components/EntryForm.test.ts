@@ -136,6 +136,6 @@ describe('Entry Form tests', () => {
 		const errorSpans = component.findAll('[data-test="error-msg"]')
 
 		expect(errorSpans.length).toBe(0)
-		expect(component.emitted('submit'))
+		expect(component.emitted('submit')).toBeTruthy()
 	})
 })
