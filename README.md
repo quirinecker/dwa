@@ -1,5 +1,7 @@
 # DWA
 
+![](.github/Board.png)
+
 This is a motivational, where you can track how long you went without accident. You can reset your progress when you have an accident.
 
 ## Installation
