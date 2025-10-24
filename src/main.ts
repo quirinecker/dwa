@@ -8,11 +8,11 @@ import Detail from '@/pages/Detail.vue'
 const app = createApp(App)
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: '/', component: Home},
-        { path: '/:name', component: Detail, props: true}
-    ]
+	history: createWebHistory(import.meta.env.BASE_URL),
+	routes: [
+		{ path: '/', component: Home },
+		{ path: '/:name', component: Detail, props: true }
+	]
 })
 
 app.use(router)
